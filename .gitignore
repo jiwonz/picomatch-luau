@@ -1,43 +1,6 @@
-# Roblox
-/*.rbxl
-/*.rbxl.lock
-/*.rbxlx
-/*.rbxlx.lock
-/*.rbxm
-/*.rbxmx
-/*.sig
-roblox.toml
+.pesde
+luau_packages
+lune_packages
+roblox_packages
 
-# dependencies
-Packages/*
-!Packages/.robloxrc
-.DS_Store
-debug.log
-
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/launch.sample.json
-
-
-# misc
-/luacov.*
-/lcov*
-/site
-/rotriever.lock
-/output.txt
-.vscode/launch.json
-cachegrind.out.*
-callgrind.out.*
+/target

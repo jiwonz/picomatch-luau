@@ -1,21 +1,19 @@
 -- ROBLOX upstream: https://github.com/micromatch/picomatch/tree/2.3.1/lib/parse.js
 
-local CurrentModule = script.Parent
-local Packages = CurrentModule.Parent
-local LuauPolyfill = require(Packages.LuauPolyfill)
+local LuauPolyfill = require("@pkg/luau_polyfill")
 local Array = LuauPolyfill.Array
 local Boolean = LuauPolyfill.Boolean
 local Error = LuauPolyfill.Error
 local Object = LuauPolyfill.Object
 local String = LuauPolyfill.String
-local String_replace = require(CurrentModule.stringUtils).stringReplace
+local String_replace = require("./stringUtils").stringReplace
 type Token = Object
 type Object = LuauPolyfill.Object
 type Array<T> = LuauPolyfill.Array<T>
 
-local RegExp = require(Packages.RegExp)
-local constants = require(CurrentModule.constants)
-local utils = require(CurrentModule.utils)
+local RegExp = require("@luau_pkg/luau_regexp")
+local constants = require("./constants")
+local utils = require("./utils")
 
 --[[*
  * Constants
@@ -42,7 +40,7 @@ local function expandRange(args: Array<any>, options)
 
 	local ok = pcall(function()
 		--[[ eslint-disable-next-line no-new ]]
-		RegExp(value)
+		RegExp.new(value)
 	end)
 	if not ok then
 		return Array.join(
@@ -303,7 +301,7 @@ function parse_(input, options) -- ROBLOX deviation END
 				extglobStar = globstar(opts)
 			end
 
-			if extglobStar ~= star or eos() or RegExp("^\\)+$"):test(remaining()) then
+			if extglobStar ~= star or eos() or RegExp.new("^\\)+$"):test(remaining()) then
 				token.close = (")$))%s"):format(extglobStar)
 				output = token.close
 			end
@@ -314,7 +312,7 @@ function parse_(input, options) -- ROBLOX deviation END
 					rest = remaining()
 					return rest
 				end)()
-				and RegExp("^\\.[^\\\\/.]+$"):test(rest)
+				and RegExp.new("^\\.[^\\\\/.]+$"):test(rest)
 			then
 				-- Any non-magical string (`.ts`) or even nested expression (`.{ts,tsx}`) can follow after the closing parenthesis.
 				-- In this case, we need to parse the string and use it in the output of the original pattern.
@@ -340,7 +338,7 @@ function parse_(input, options) -- ROBLOX deviation END
 	 * Fast paths
 	 ]]
 
-	if opts.fastpaths ~= false and not RegExp('(^[*!]|[/()[\\]{}"])'):test(input) then
+	if opts.fastpaths ~= false and not RegExp.new('(^[*!]|[/()[\\]{}"])'):test(input) then
 		local backslashes = false
 
 		-- ROBLOX deviation: using custom string.replace implementation
@@ -432,7 +430,7 @@ function parse_(input, options) -- ROBLOX deviation END
 			end
 
 			-- collapse slashes to reduce potential for exploits
-			local match = (RegExp("^\\\\+")):exec(remaining())
+			local match = (RegExp.new("^\\\\+")):exec(remaining())
 			local slashes = 0
 
 			if match ~= nil and #match[1] > 2 then
@@ -513,7 +511,7 @@ function parse_(input, options) -- ROBLOX deviation END
 		 * until we reach the closing double quote.
 		 ]]
 
-		if state.quotes == 1 and value ~= '"' then
+		if state.quotes == 1 and value :: string ~= '"' then
 			value = utils.escapeRegex(value)
 			prev.value ..= value
 			append({ value = value })
@@ -524,7 +522,7 @@ function parse_(input, options) -- ROBLOX deviation END
 		 * Double quotes
 		 ]]
 
-		if value == '"' then
+		if value :: string == '"' then
 			state.quotes = state.quotes == 1 and 0 or 1
 			if opts.keepQuotes == true then
 				push({ type = "text", value = value })
@@ -536,13 +534,13 @@ function parse_(input, options) -- ROBLOX deviation END
 		 * Parentheses
 		 ]]
 
-		if value == "(" then
+		if value :: string == "(" then
 			increment("parens")
 			push({ type = "paren", value = value })
 			continue
 		end
 
-		if value == ")" then
+		if value :: string == ")" then
 			if state.parens == 0 and opts.strictBrackets == true then
 				error(Error.new("SyntaxError: " .. syntaxError("opening", "(")))
 			end
@@ -566,7 +564,7 @@ function parse_(input, options) -- ROBLOX deviation END
 		 * Square brackets
 		 ]]
 
-		if value == "[" then
+		if value :: string == "[" then
 			if opts.nobracket == true or remaining():find("]", 1, true) == nil then
 				if opts.nobracket ~= true and opts.strictBrackets == true then
 					error(Error.new("SyntaxError: " .. syntaxError("closing", "]")))
@@ -792,8 +790,8 @@ function parse_(input, options) -- ROBLOX deviation END
 				end
 
 				if
-					(prev.value == "(" and not RegExp("[!=<:]"):test(next))
-					or (next == "<" and not RegExp("<([!=]|\\w+>)"):test(remaining()))
+					(prev.value == "(" and not RegExp.new("[!=<:]"):test(next))
+					or (next == "<" and not RegExp.new("<([!=]|\\w+>)"):test(remaining()))
 				then
 					output = ("\\%s"):format(value)
 				end
@@ -817,7 +815,7 @@ function parse_(input, options) -- ROBLOX deviation END
 
 		if value == "!" then
 			if Boolean.toJSBoolean(opts.noextglob) ~= true and peek() == "(" then
-				if peek(2) ~= "?" or not RegExp("[!=<:]"):test(peek(3)) then
+				if peek(2) ~= "?" or not RegExp.new("[!=<:]"):test(peek(3)) then
 					extglobOpen("negate", value)
 					continue
 				end
@@ -905,7 +903,7 @@ function parse_(input, options) -- ROBLOX deviation END
 		end
 
 		local rest = remaining()
-		if Boolean.toJSBoolean(opts.noextglob) ~= true and RegExp("^\\([^?]"):test(rest) then
+		if Boolean.toJSBoolean(opts.noextglob) ~= true and RegExp.new("^\\([^?]"):test(rest) then
 			extglobOpen("star", value)
 			continue
 		end
@@ -1180,7 +1178,7 @@ parse.fastpaths = function(input: string, options: Object?)
 		elseif str == "**/.*" then
 			return ("(?:%s%s%s)?%s%s%s"):format(nodot, globstar(opts), SLASH_LITERAL, DOT_LITERAL, ONE_CHAR, star)
 		else
-			local match = RegExp("^(.*?)\\.(\\w+)$"):exec(str)
+			local match = RegExp.new("^(.*?)\\.(\\w+)$"):exec(str)
 			if not Boolean.toJSBoolean(match) then
 				return nil
 			end

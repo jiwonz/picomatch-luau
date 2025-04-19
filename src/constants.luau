@@ -1,11 +1,9 @@
 -- ROBLOX upstream: https://github.com/micromatch/picomatch/tree/2.3.1/lib/constants.js
 
-local CurrentModule = script.Parent
-local Packages = CurrentModule.Parent
-local LuauPolyfill = require(Packages.LuauPolyfill)
+local LuauPolyfill = require("@pkg/luau_polyfill")
 local Object = LuauPolyfill.Object
 
-local RegExp = require(Packages.RegExp)
+local RegExp = require("@luau_pkg/luau_regexp")
 
 -- ROBLOX deviation: skipping path
 -- local path = require("path")
@@ -92,9 +90,9 @@ return {
 	REGEX_NON_SPECIAL_CHARS = "^[^@![%].,$*+?^{}()|\\/]+",
 	REGEX_SPECIAL_CHARS = "[-*+?.^${}(|)[%]]",
 	-- ROBLOX TODO START: no "g" flag supported yet
-	REGEX_SPECIAL_CHARS_BACKREF = RegExp("(\\\\?)((\\W)(\\3*))"),
+	REGEX_SPECIAL_CHARS_BACKREF = RegExp.new("(\\\\?)((\\W)(\\3*))"),
 	-- ROBLOX TODO: no "g" flag supported yet
-	REGEX_SPECIAL_CHARS_GLOBAL = RegExp("([-*+?.^${}(|)[\\]])"),
+	REGEX_SPECIAL_CHARS_GLOBAL = RegExp.new("([-*+?.^${}(|)[\\]])"),
 	-- REGEX_REMOVE_BACKSLASH = RegExp("(?:\\[.*?[^\\\\]\\]|\\\\(?=.))", "g"),
 	-- ROBLOX TODO END
 

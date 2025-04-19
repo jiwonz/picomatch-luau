@@ -1,8 +1,6 @@
 -- ROBLOX upstream: https://github.com/micromatch/picomatch/tree/2.3.1/lib/picomatch.js
 
-local CurrentModule = script.Parent
-local Packages = CurrentModule.Parent
-local LuauPolyfill = require(Packages.LuauPolyfill)
+local LuauPolyfill = require("@pkg/luau_polyfill")
 local Array = LuauPolyfill.Array
 local Boolean = LuauPolyfill.Boolean
 local Error = LuauPolyfill.Error
@@ -10,15 +8,15 @@ local Object = LuauPolyfill.Object
 type Array<T> = LuauPolyfill.Array<T>
 type Object = LuauPolyfill.Object
 
-local RegExp = require(Packages.RegExp)
+local RegExp = require("@luau_pkg/luau_regexp")
 type RegExp = RegExp.RegExp
 
 -- ROBLOX deviation: skipping path
 -- local path = require("path")
-local scan = require(CurrentModule.scan)
-local parse = require(CurrentModule.parse)
-local utils = require(CurrentModule.utils)
-local constants = require(CurrentModule.constants)
+local scan = require("./scan")
+local parse = require("./parse")
+local utils = require("./utils")
+local constants = require("./constants")
 local function isObject(val)
 	return typeof(val) == "table" and not Array.isArray(val)
 end
@@ -422,7 +420,7 @@ end
 function picomatch.toRegex(source: string, options: Object?)
 	local ok, result = pcall(function()
 		local opts: Object = options or {}
-		return RegExp(
+		return RegExp.new(
 			source,
 			Boolean.toJSBoolean(opts.flags) and opts.flags or if Boolean.toJSBoolean(opts.nocase) then "i" else ""
 		)
@@ -432,7 +430,7 @@ function picomatch.toRegex(source: string, options: Object?)
 		if options ~= nil and options.debug == true then
 			error(err)
 		end
-		return RegExp("$^")
+		return RegExp.new("$^")
 	end
 	return result
 end

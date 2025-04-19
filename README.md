@@ -1,4 +1,4 @@
-# picomatch
+# picomatch-luau
 
 Status: :heavy_check_mark: Ported
 
@@ -18,4 +18,11 @@ Version: v2.3.1
 | Package | Version | Status | Notes |
 | ------- | ------- | ------ | ----- |
 
+## Note
+This project is a fork of [Roblox/picomatch-lua](https://github.com/Roblox/picomatch-lua).
 
+## Installation
+via pesde
+```sh
+pesde add jiwonz/picomatch
+```

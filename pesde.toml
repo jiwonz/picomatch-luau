@@ -16,7 +16,7 @@ default = "https://github.com/pesde-pkg/index"
 
 [dependencies]
 luau_regexp = { name = "jiwonz/luau_regexp", version = "^0.1.2" }
-luau_polyfill = { name = "jiwonz/luau_polyfill", version = "^0.1.0" }
+luau_polyfill = { name = "jiwonz/luau_polyfill", version = "^0.1.1" }
 
 [dev_dependencies]
 multitarget = { name = "jiwonz/multitarget", version = "^0.4.0-rc.29", target = "lune" }
